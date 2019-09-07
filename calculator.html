@@ -1,0 +1,658 @@
+
+<head>
+	<script src="angular.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="style.css" media="screen">
+
+	<style>
+		.calcBox {
+			width: 50px;
+		}
+	</style>
+
+</head>
+<div ng-app="app" ng-controller="StatCalcController" class="content">
+
+	<form ng-repeat="calc in calcs" style="position:relative;height:100%">
+
+		<div style="position:absolute">
+			<table>
+			<tr ng-repeat="stat in calc.Stats track by $index">
+				<td ng-if="stat === -1"><br/></td>
+				<td ng-if="stat !== -1">{{stats[stat][0]}}</td>
+				<td ng-if="stat !== -1"><input class="calcBox" ng-model="calc.Bases[stat]" type="number" ng-change="calc.Calculate()"/></td>
+				<td ng-if="stat !== -1"><input class="calcBox" ng-model="calc.GearMods[stat]" type="number" ng-change="calc.Calculate()"/></td>
+				<td ng-if="stat !== -1">{{calc.Mods[stat]}}</td>
+			</div>
+			</table>
+
+		</div>
+		<div style="position:absolute;right:0px;top:0px">
+			Level: {{calc.Level}}<br/>
+			Total exp: {{calc.TotalExp}}<br/><br/>
+
+			WV: {{calc.WV}}<br/>
+			AV: {{calc.AV}}<br/>
+			Offense: {{calc.Offense}}<br/>
+			Defense: {{calc.Defense}}<br/>
+			Speed: {{calc.Speed}}<br/><br/>
+
+			<input type="checkbox" ng-model="calc.Blessed"> Blessed<br/>
+			<input type="checkbox" ng-model="calc.MaxingBless"> Maxing Bless<br/>
+			<input type="checkbox" ng-model="calc.MaxingGear"> Maxing Gear<br/>
+			<input type="checkbox" ng-model="calc.ShowTactics"> Include Tactics<br/>
+			<input type="checkbox" ng-model="calc.Hardcore"> Hardcore<br/>
+			<input type="checkbox" ng-model="calc.LWDWBonus"> Show LW/DW Bonus<br/>
+			<input type="checkbox" ng-model="calc.CWBonus"> Show CW/DH Bonus<br/>
+			<input type="checkbox" ng-model="calc.ThiefMode"> Thief Mode<br/><br/>
+
+			<table>
+			<tr><td>LW/DW 	</td><td><input class="calcBox" type="number" ng-model="calc.ProfPoints[0]"/></td></tr>
+			<tr><td>CW/DH 	</td><td><input class="calcBox" type="number" ng-model="calc.ProfPoints[1]"/></td></tr>
+			<tr><td>Athlete </td><td><input class="calcBox" type="number" ng-model="calc.ProfPoints[2]"/></td></tr>
+			<tr><td>Thief 	</td><td><input class="calcBox" type="number" ng-model="calc.ProfPoints[3]"/></td></tr>
+			</table>
+
+		</div>
+
+
+	</form>
+
+</body>
+
+<script>
+
+
+var app = angular.module('app', []);
+
+var V_HP = 0;
+var V_MANA = 1;
+var V_END = 2;
+
+var V_WIS = 3;
+var V_INT = 4;
+var V_AGI = 5;
+var V_STR = 6;
+
+var V_DAGGER = 11;
+var V_H2H = 12;
+var V_SWORD = 13;
+var V_2H = 14;
+var V_STAFF = 15;
+var V_RAGE = 16;
+
+var V_AS = 17;
+var V_ATTACK = 18;
+var V_PARRY = 19;
+var V_WARCRY = 20;
+var V_TACTICS = 21;
+var V_SH = 22;
+var V_BC = 23;
+var V_SS = 24;
+
+var V_BART = 25;
+var V_PERCEPTION = 26;
+var V_STEALTH = 27;
+
+var V_BLESS = 28;
+var V_HEAL = 29;
+var V_FREEZE = 30;
+var V_MS = 31;
+var V_LF = 32;
+var V_FIRE = 33;
+var V_PULSE = 34;
+
+var V_REGEN = 35;
+var V_MEDITATE = 36;
+var V_IMMUNITY = 37;
+var V_DURATION = 39;
+
+
+var V_PROF = 42;
+
+var STAT_SPACE = -1;
+
+var NAME_INDEX = 0;
+var ATTRIBUTE1_INDEX = 1;
+var ATTRIBUTE2_INDEX = 2;
+var ATTRIBUTE3_INDEX = 3;
+var EXPFACTOR_INDEX = 4;
+var MINBASE_INDEX = 5;
+
+var Weapons = [ 11, 12, 13, 14, 15 ];
+
+var AllStats = [ V_HP, V_MANA, V_END, V_WIS, V_INT, V_AGI, V_STR, V_DAGGER, V_H2H, V_SWORD, V_2H, V_STAFF, V_RAGE, V_AS, V_ATTACK, V_PARRY, V_WARCRY, V_TACTICS, V_SH, V_BC, V_SS, V_BLESS, V_HEAL, V_FREEZE, V_MS, V_LF, V_FIRE, V_PULSE, V_DURATION, V_BART, V_PERCEPTION, V_STEALTH, V_REGEN, V_MEDITATE, V_IMMUNITY, V_PROF ];
+var MageStats = [V_HP, V_MANA, V_END,  STAT_SPACE, V_WIS, V_INT, V_AGI, V_STR,  STAT_SPACE, V_DAGGER, V_H2H, V_STAFF,  STAT_SPACE, V_BLESS, V_HEAL, V_FREEZE, V_MS, V_LF, V_FIRE, V_PULSE, V_DURATION,  STAT_SPACE, V_BART, V_PERCEPTION, V_STEALTH, V_MEDITATE, V_IMMUNITY,  STAT_SPACE, V_PROF ];
+var WarriorStats = [V_HP, V_MANA,  STAT_SPACE, V_WIS, V_INT, V_AGI, V_STR,  STAT_SPACE, V_DAGGER, V_H2H, V_SWORD, V_2H, V_RAGE,  STAT_SPACE, V_AS, V_ATTACK, V_PARRY, V_WARCRY, V_TACTICS, V_SH, V_BC, V_SS,  STAT_SPACE, V_BART, V_PERCEPTION, V_STEALTH, V_REGEN, V_IMMUNITY,  STAT_SPACE, V_PROF ];
+var SeyanStats = [V_HP, V_MANA, V_END,  STAT_SPACE, V_WIS, V_INT, V_AGI, V_STR,  STAT_SPACE, V_DAGGER, V_H2H, V_SWORD, V_2H,  STAT_SPACE, V_AS, V_ATTACK, V_PARRY, V_WARCRY, V_TACTICS, V_SH, V_BC, V_SS,  STAT_SPACE, V_BLESS, V_HEAL, V_FREEZE, V_MS, V_LF, V_FIRE, V_PULSE,  STAT_SPACE, V_BART, V_PERCEPTION, V_STEALTH, V_REGEN, V_MEDITATE, V_IMMUNITY,  STAT_SPACE, V_PROF ];
+
+
+var stats = [
+
+        // {NAME,         MODDED BY (3),   EXP FACTOR,   INITIAL BASE]
+
+        // Powers
+	    ["Hitpoints",          -1,   -1,   -1,     3,  10],	// 0		
+	    ["Endurance",          -1,   -1,   -1,     3,  10],	// 1		
+	    ["Mana",               -1,   -1,   -1,     3,  10],	// 2		
+
+	    // Attributes
+	    ["Wisdom",             -1,   -1,   -1,     2,  10],	// 3		
+	    ["Intuition",          -1,   -1,   -1,     2,  10],	// 4		
+	    ["Agility",            -1,   -1,   -1,     2,  10],	// 5		
+	    ["Strength",           -1,   -1,   -1,     2,  10],	// 6		
+
+	    // Values
+	    ["Armor",              -1,   -1,   -1,     0,   0],	// 7		
+	    ["Weapon",             -1,   -1,   -1,     0,   0],	// 8		
+	    ["Light",              -1,   -1,   -1,     0,   0],	// 9		
+	    ["Speed",              V_AGI,V_AGI,V_STR,  0,   0],	// 10			
+
+        // Primary Fighting Skills	
+	    ["Dagger",             V_INT,V_AGI,V_STR,  1,   1],	// 11		
+	    ["Hand to Hand",       V_AGI,V_STR,V_STR,  1,   1],	// 12		
+	    ["Sword",              V_INT,V_AGI,V_STR,  1,   1],	// 13		
+	    ["Two-Handed",         V_AGI,V_STR,V_STR,  1,   1],	// 14		
+        ["Staff",              V_INT,V_AGI,V_STR,  1,   1],	// 15	
+        ["Rage",               V_INT,V_STR,V_STR,  1,   1],	// 16	
+
+	    // Secondary Fighting Skills
+	    ["Armor Skill",        V_AGI,V_AGI,V_STR,  1,   1],	// 17		
+	    ["Attack",             V_INT,V_AGI,V_STR,  1,   1],	// 18		
+	    ["Parry",              V_INT,V_AGI,V_STR,  1,   1],	// 19		
+	    ["Warcry",             V_INT,V_AGI,V_STR,  1,   1],	// 20		
+	    ["Tactics",            V_INT,V_AGI,V_STR,  1,   1],	// 21		
+	    ["Surround Hit",       V_INT,V_AGI,V_STR,  1,   1],	// 22		
+	    ["Body Control",       V_INT,V_AGI,V_STR,  1,   1],	// 23		
+	    ["Speed Skill",        V_INT,V_AGI,V_STR,  1,   1],	// 24		
+
+	    // Misc. Skills
+        ["Bartering",          V_INT,V_INT,V_WIS,  1,   1],	// 25		
+        ["Perception",         V_INT,V_INT,V_WIS,  1,   1],	// 26		
+	    ["Stealth",            V_INT,V_AGI,V_AGI,  1,   1],	// 27		
+
+	    // Spells
+	    ["Bless",              V_INT,V_INT,V_WIS,  1,   1],	// 28		
+	    ["Heal",               V_INT,V_INT,V_WIS,  1,   1],	// 29		
+	    ["Freeze",             V_INT,V_INT,V_WIS,  1,   1],	// 30		
+	    ["Magic Shield",       V_INT,V_INT,V_WIS,  1,   1],	// 31		
+	    ["Lightning",          V_INT,V_INT,V_WIS,  1,   1],	// 32		
+	    ["Fire",               V_INT,V_INT,V_WIS,  1,   1],	// 33		
+	   	["Pulse",              V_INT,V_INT,V_WIS,  1,   1],	// 34			
+
+	    ["Regenerate",         V_STR,V_STR,V_STR,  1,   1],	// 35		
+	    ["Meditate",           V_WIS,V_WIS,V_WIS,  1,   1],	// 36		
+	    ["Immunity",           V_INT,V_WIS,V_STR,  1,   1],	// 37		
+
+	    ["Ancient Knowledge",  V_INT,V_WIS,V_STR,  0,   1],	// 38		
+	    ["Duration",           V_INT,V_WIS,V_STR,  1,   1],	// 39		
+	    ["Rage",               V_INT,V_STR,V_STR,  1,   1],	// 40		
+	    ["Resist Cold",        -1,   -1,   -1,     0,   1],	// 41		
+	    ["Profession",         -1,   -1,   -1,     3,   1]	// 42		
+];
+
+var TOTAL_STAT_COUNT = 43;
+
+var P_LWDW = 0;
+var P_CW = 1;
+var P_ATHLETE = 2;
+var P_THIEF = 3;
+var Professions = [ "LW/DW", "Clan Warrior", "Athlete", "Thief" ];
+
+var Classes = {
+	Mage : 0,
+	Warrior : 1,
+	Seyan : 2
+}
+
+function GetDisplayStats(Class)
+    {
+        switch (Class)
+        {
+            case Classes.Mage:
+                return MageStats;
+            case Classes.Warrior:
+                return WarriorStats;
+            case Classes.Seyan:
+                return SeyanStats;
+            default:
+                return [];
+        }
+    }
+
+function PTMFactor(Stat)
+{
+    if (Stat >= V_WIS && Stat <= V_AGI)
+    {
+        return 2;
+    }
+    return 1;
+}
+
+function PTMBase(Class, Stat, Hardcore)
+{
+    if (Class == Classes.Seyan)
+    {
+        if (Hardcore)
+        {
+            return 107;
+        }
+        return 100;
+    }
+
+    if (Hardcore)
+    {
+        return 122;
+    }
+    return 115;
+}
+
+function MaxBase(Class, Stat, Hardcore)
+{
+    // hitpoints, endurance, mana capped at class's pre-ptm cap
+    if (Stat < V_WIS)
+    {
+        if (Class == Classes.Seyan)
+        {
+            if (Hardcore)
+            {
+                return 107;
+            }
+            return 100;
+        }
+
+        if (Hardcore)
+        {
+            return 122;
+        }
+        return 115;
+    }
+
+    // profession capped at 150
+    if (Stat == 42)
+    {
+        return 150;
+    }
+
+    // seyan nerf, so sad
+    if (Class == Classes.Seyan)
+    {
+        return 242;
+    }
+
+    // everything else: 255 max
+    return 255;
+}
+
+function ProfMax(Prof)
+{
+    switch (Prof)
+    {
+        case P_LWDW:
+        case P_CW:
+        case P_ATHLETE:
+        case P_THIEF:
+            return 30;
+        default:
+            return 0;
+    }
+
+}
+
+var Formulas = {
+
+
+    // the cost of raising a skill from 1 to Base
+    TotalExp : function(Class, Stat, Base, Hardcore)
+    {
+        // min base, generally 1 or 10
+        var MinBase = stats[Stat][MINBASE_INDEX];
+
+        // the exp factor to take into account
+        var ExpFactor = stats[Stat][EXPFACTOR_INDEX];
+
+        // max base before ptming
+        var _PTMBase = PTMBase(Class, Stat, Hardcore);
+
+        // extra cost per ptm
+        var PTMCost = PTMFactor(Stat) * 3000000;
+
+        // exp calculation
+
+        // easiest to just do it in a loop, doesn't take very long and there isn't a nice formula for the summation because of round off every time (that I know of at least)
+        var Exp = 0;
+
+        for (var n = MinBase; n < Base; n++)
+        {
+            // pretty much the same stuff as in skill.c in astonia code
+            var nr = n - MinBase + 6;
+
+            if (Class == Classes.Seyan)
+            {
+                Exp += Math.floor(Math.max(1, nr * nr * nr * ExpFactor * 4 / 30));
+            }
+            else if (Class == Classes.Mage)
+            {
+                Exp += Math.floor(Math.max(1, nr * nr * nr * ExpFactor / 10));
+            }
+            else if (Class == Classes.Warrior)
+            {
+                Exp += Math.floor(Math.max(1, nr * nr * nr * ExpFactor / 10));
+            }
+
+            if (n >= _PTMBase)
+            {
+                Exp += PTMCost;
+            }
+        }
+
+        return Exp;
+    },
+    
+    // find out the amount of gear required to max
+    MaxingGear : function(Class, Base)
+    {
+        if (Class == Classes.Seyan)
+        {
+            var Correction = 0;
+            if (Base > 1)
+            {
+                // correction for bases of multiples of 40... they game rounds down by 1 there
+                Correction = (Base % 40 == 0 ? -1 : 0);
+                if (Correction == 0)
+                {
+                    if ((Correction - 1) % 40 == 0)
+                    {
+                        Correction = 1;
+                    }
+                }
+            }
+            return (0.725 * Base) + Correction;
+        }
+        else return (0.5 * Base);
+    },
+
+    // bless mod needed to fully max
+    MaxingBless : function(Class, Base)
+    {
+        switch (Class)
+        {
+            case Classes.Mage:
+                return Base * 2;  // 0.5 * 4
+            case Classes.Warrior:
+                return Base * 2;  // 0.5 * 4
+            case Classes.Seyan:
+                return Math.floor(Base * 2.9); // 0.725 * 4
+            default:
+                return 0;
+        }   
+    } 
+
+}
+
+
+app.controller('StatCalcController', function ExpCalcController($scope) {
+
+	$scope.stats = stats;
+	$scope.calcs = [];
+
+	$scope.calc = {
+		TotalExp : 0,
+		Level : 0,
+			
+		WV : 0,
+		AV : 0,
+		Offense : 0,
+		Defense : 0,
+		Speed : 0,
+
+		Hardcore : true,
+		Blessed : true,
+		MaxingBless : true,
+		MaxingGear : true,
+		ShowTactics : true,
+		LWDWBonus : true,
+		CWBonus : true,
+		ThiefMode : false,
+
+		Class : 0,
+
+		Stats : [],
+
+		Bases : {},
+		GearMods : {},
+		Mods : {},
+
+		ProfPoints : [0,0,0,0],
+
+		// calculate bless separately
+		GetBlessBonus : function()
+		{
+		    var Bless = 0;
+
+		    if (this.Blessed)
+		    {
+		        // maxed, use arbitrarily high bless value
+		        if (this.MaxingBless)
+		        {
+		            Bless = 10000;
+		        }
+		        else
+		        {
+		            // self blessed, get unblessed bless mod
+
+		            if (this.Class == Classes.Warrior)
+		            {
+		                return 0;
+		            }
+
+		            var Int = this.Bases[Stats.V_INT];
+		            var Wis = this.Bases[Stats.V_WIS];
+		            var BlessBase = this.Bases[Stats.V_BLESS];
+
+		            var IntGear = this.GearMods[Stats.V_INT];
+		            var WisGear = this.GearMods[Stats.V_WIS];
+		            var BlessGear = this.GearMods[Stats.V_BLESS];
+
+		            Int += Math.min(IntGear, Formulas.MaxingGear(Class, Int));
+		            Wis += Math.min(WisGear, Formulas.MaxingGear(Class, Wis));
+		            Bless += Math.min(BlessGear, Formulas.MaxingGear(Class, Bless));
+
+		            if (this.LWDWBonus)
+		            {
+		                var LWDWBonus = this.LWDWValue / 2;
+		                Int += LWDWBonus;
+		                Wis += LWDWBonus;
+		            }
+
+		            if (this.CWBonus)
+		            {
+		                var CWBonus = this.CWValue;
+		                Int += CWBonus;
+		                Wis += CWBonus;
+		            }
+
+
+		            Bless = (Int + Int + Wis) / 5;
+
+		            var BlessMax = Math.max(15 + BlessBase, BlessBase * 3);
+		            Bless = Math.min(Bless, BlessMax);
+		        }
+		    }
+
+		    return Math.floor(Bless);
+		},
+
+		Calculate : function() {
+
+			this.TotalExp = 0;
+
+            var LWDWValue = this.ProfPoints[P_LWDW];
+            var CWValue = this.ProfPoints[P_CW];
+
+            // get initial bless bonus
+            var Bless = this.GetBlessBonus();
+
+            for (let DisplayStat of this.Stats)
+            {
+                var ModValue = 0;
+
+                if (DisplayStat == STAT_SPACE) continue;
+
+                // add gear bonus
+
+                if (this.Bases[DisplayStat] === undefined) this.Bases[DisplayStat] = stats[DisplayStat][5];
+                if (this.GearMods[DisplayStat] === undefined) this.GearMods[DisplayStat] = 0;
+
+                var Base = this.Bases[DisplayStat];
+                var GearMod = this.GearMods[DisplayStat];
+
+                if (Base < stats[DisplayStat][MINBASE_INDEX]) {
+                	Base = this.Bases[DisplayStat] = stats[DisplayStat][MINBASE_INDEX];
+                }
+
+
+                // count up the total exp for raising the stat
+                this.TotalExp += Formulas.TotalExp(this.Class, DisplayStat, Base, this.Hardcore);
+
+                //RefreshPlusMinusVisibility(DisplayStat, BaseValue);
+
+                ModValue += Base;
+
+                var GearValue = 0;
+                var GearValueAdded = 0;
+
+                if (DisplayStat != V_AS && DisplayStat != V_PROF)
+                {
+                    GearValue = GearMod;
+
+                    var MaxingGearValue = Formulas.MaxingGear(this.Class, Base);
+
+                    if (this.MaxingGear)
+                    {
+                        //GearMod.Text = "" + MaxingGearValue;
+                        //GearMod.ForeColor = Color.Red;
+                    }
+                    else
+                    {
+
+                    	/*
+                        if (GearValue >= MaxingGearValue)
+                        {
+                            GearMod.ForeColor = Color.Red;
+                        }
+                        else
+                        {
+                            GearMod.ForeColor = Color.Black;
+                        }*/
+                    }
+
+                    GearValueAdded = Math.floor(Math.min(GearValue, MaxingGearValue));
+                }
+
+                if (DisplayStat >= V_HP && DisplayStat <= V_END)
+                {
+                    ModValue += GearValueAdded;
+                }
+                else if (DisplayStat > V_END)
+                {
+
+                    if (DisplayStat <= V_STR)
+                    {
+                        // attributes
+
+                        // add bless bonus
+                        var MaxingBless = Formulas.MaxingBless(this.Class, Base);
+                        var BlessAdd = Math.floor(Math.min(Bless, MaxingBless) / 4);
+
+                        // mages: add bless
+                        if (this.Class == Classes.Mage)
+                        {
+                            //Bless = Math.Min(Bless, MaxingBless);
+                            ModValue += BlessAdd + GearValueAdded;
+                        }
+                        else
+                        {
+                            var Correction = (Base % 40 == 0 ? -1 : 0);
+                            if (BlessAdd >= (MaxingBless / 4 + Correction) - GearValueAdded)
+                            {
+                                //GearMod.ForeColor = Color.Red;
+                            }
+                            else
+                            {
+                                //GearMod.ForeColor = Color.Black;
+                            }
+
+                            // seyan/warrior: add bless that was not added by gear
+                            ModValue += Math.floor(Math.Min(BlessAdd + GearValueAdded, (MaxingBless / 4 + Correction)));
+
+                        }
+                        
+
+                        // CW/DW/LW bonuses
+
+                        if (this.LWDWBonus)
+                        {
+                            ModValue += this.ProfPoints[0] / 2;
+                        }
+
+                        if (this.CWBonus)
+                        {
+                            ModValue += Math.max(this.ProfPoints[2], this.ProfPoints[3]);
+                        }
+
+                    }
+                    else if (DisplayStat != V_PROF)
+                    {
+                        // add bonus from attributes, which have already been calculated
+                        var Attribute1 = stats[DisplayStat][ATTRIBUTE1_INDEX];
+                        var Attribute2 = stats[DisplayStat][ATTRIBUTE2_INDEX];
+                        var Attribute3 = stats[DisplayStat][ATTRIBUTE3_INDEX];
+
+                        var Attribute1Mod = this.Mods[Attribute1];
+                        var Attribute2Mod = this.Mods[Attribute2];
+                        var Attribute3Mod = this.Mods[Attribute3];
+
+                        ModValue += (Attribute1Mod + Attribute2Mod + Attribute3Mod) / 5;
+
+                        var MaxMod = Math.max(15 + Base, Base * 3);
+                        ModValue = Math.floor(Math.min(MaxMod, ModValue));
+
+                        ModValue += GearValueAdded;
+
+                    }
+                }
+
+                this.Mods[DisplayStat] = ModValue;
+
+                this.Bases[DisplayStat] = Base;
+                this.GearMods[DisplayStat] = GearValue;
+                this.Mods[DisplayStat] = ModValue;
+            }
+
+            this.Level = Math.pow(this.TotalExp, 0.25);
+
+            //CalculateLevel();
+            //CalculateUsedPPS();
+            //CalculateValues();
+            //AddTactics();
+            //EncodeBuild();
+
+		}
+
+		
+
+
+
+
+	};
+
+	$scope.calc.Stats = MageStats;
+	$scope.calc.Calculate();
+
+	$scope.calcs.push($scope.calc);
+
+});
+
+
+</script>
+

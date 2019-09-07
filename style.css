@@ -1,0 +1,488 @@
+header {
+	background-color: rgba(0, 0, 0, 0.5);
+	font-family: 'Lora', serif;
+	border-bottom: 5px #901818 solid;
+	-webkit-box-shadow: 0px 3px 5px 0px rgba(0, 0, 0, 0.6);
+	-moz-box-shadow:    0px 3px 5px 0px rgba(0, 0, 0, 0.6);
+	box-shadow:         0px 3px 5px 0px rgba(0, 0, 0, 0.6);
+}
+
+html,body {
+	font-family:'Open Sans', sans-serif;
+	background: url('https://www.astonia3.com/images/background.png');
+	width: 100%;
+	height: 100%;
+	margin: 0px;
+	color: #ffffff;
+	padding: 0px;
+}
+
+#wrapper{
+	position: relative;
+	min-height: 100%;
+}
+
+footer{
+	position: absolute;
+	background-color: rgba(0, 0, 0, 0.5);
+	font-family: 'Lora', serif;
+	border-top: 5px #901818 solid;
+	-webkit-box-shadow: 0px -3px 5px 0px rgba(0, 0, 0, 0.6);
+	-moz-box-shadow:    0px -3px 5px 0px rgba(0, 0, 0, 0.6);
+	box-shadow:         0px -3px 5px 0px rgba(0, 0, 0, 0.6);
+	bottom: 0px;
+	left: 0px;
+	height: 30px;
+	width: 100%;
+}
+
+.spacer {
+	padding: 10px;
+	padding-bottom: 30px;
+}
+
+.shortspacer {
+	padding-bottom: 15px;
+}
+
+.logo {
+	position: relative;
+	width: 100%;
+	margin-right: 374px;
+	text-align: center;
+	padding-top: 20px;
+	padding-bottom: 20px;
+	
+}
+
+.footinfo {
+	padding-top: 5px;
+	padding-bottom: 5px;
+	text-align: center;
+}
+
+.footinfo a {
+	color: #ffffff;
+	text-decoration: none;
+}
+
+.footinfo a:hover {
+	color: #901818;
+}
+
+.charinfo {
+	background-color: rgba(200, 200, 200, 0.5);
+	color: #000000;
+	width: 300px;
+	margin-bottom: 10px;
+	padding: 10px;
+	border: 3px solid #901818;
+}
+
+.charinfo .charname {
+	font-size: 30px;
+	font-weight: bold;
+}
+
+.charinfo .view {
+	background-color: #901818;
+	color: #ffffff;
+	padding: 3px 10px;
+	margin: 8px;
+	font-weight: bold;
+}
+
+.charinfo .view a:link, .charinfo .view a:hover,.charinfo .view a:visited, .charinfo .view a:active {
+	text-decoration: none;
+	color: #ffffff;
+}
+
+.charinfo .tinyspacer {
+	height: 8px;
+}
+
+.clanoverview {
+	position: relative;
+	width: 780px;
+	margin: 2px;
+}
+
+.clanoverview .clanjewels {
+	position: absolute;
+	left: 300px;
+}
+
+.clanoverview .clanmembers {
+	position: absolute;
+	left: 430px;
+}
+
+.clanoverview .clansite {
+	position: absolute;
+	left: 600px;
+}
+
+.viewclan {
+	position: relative;
+	width: 780px;
+	margin: 2px;
+}
+
+.viewclan .vcclass {
+	position: absolute;
+	left: 200px;
+}
+
+.viewclan .vcgender {
+	position: absolute;
+	left: 260px;
+}
+
+.viewclan .vclevel {
+	position: absolute;
+	left: 320px;
+}
+
+.viewclan .vcrank {
+	position: absolute;
+	left: 380px;
+}
+
+.timer {
+	position: relative;
+	width: 780px;
+	margin: 2px;
+}
+
+.timer .timertime {
+	position: absolute;
+	left: 60px;
+}
+
+.timer .timerjewels {
+	position: absolute;
+	left: 220px;
+}
+
+.timer .timerwinner {
+	position: absolute;
+	left: 150px;
+}
+
+.timer .timerclan {
+	position: absolute;
+	left: 300px;
+}
+
+.stats {
+        position: relative;
+        width: 780px;
+        margin: 2px;
+}
+
+.stats .level {
+        position: absolute;
+        left: 150px;
+}
+
+.stats .kills {
+        position: absolute;
+        left: 220px;
+}
+
+.stats .deaths {
+        position: absolute;
+        left: 290px;
+}
+
+.stats .ratio {
+        position: absolute;
+        left: 370px;
+}
+
+.stats .jewels {
+        position: absolute;
+        left: 460px;
+}
+
+
+.cstats {
+        position: relative;
+        width: 780px;
+        margin: 2px;
+}
+
+.cstats .jewels {
+        position: absolute;
+        left: 200px;
+}
+
+.cstats .kills {
+        position: absolute;
+        left: 270px;
+}
+
+.cstats .deaths {
+        position: absolute;
+        left: 340px;
+}
+
+.cstats .ratio {
+        position: absolute;
+        left: 410px;
+}
+
+
+
+.top50 {
+	position: relative;
+	width: 780px;
+	margin: 2px;
+}
+
+.top50 .top50name {
+	position: absolute;
+	left: 60px;
+}
+
+.top50 .top50class {
+	position: absolute;
+	left: 220px;
+}
+
+.top50 .top50gender {
+	position: absolute;
+	left: 275px;
+}
+
+.top50 .top50level {
+	position: absolute;
+	left: 340px;
+}
+
+.top50 .top50clan {
+	position: absolute;
+	left: 420px;
+}
+
+.online {
+	position: relative;
+	width: 780px;
+	margin: 2px;
+}
+
+.online .altarea {
+	position: absolute;
+	left: 380px;
+}
+
+.online .altclass {
+	position: absolute;
+	left: 200px;
+}
+
+.online .altgender {
+	position: absolute;
+	left: 260px;
+}
+
+.online .altlevel {
+	position: absolute;
+	left: 320px;
+}
+
+.online .altcreated {
+	position: absolute;
+	left: 620px;
+}
+
+.break {
+	position:relative;
+	background: #ffffff;
+	height: 2px;
+	width: 100%;
+
+}
+.break_white {
+	
+	
+}
+
+.content {
+	width: 800px;
+	position: relative;
+	padding: 30px;
+	margin: 0 auto;
+	margin-top: 3%;
+	background-color: rgba(0, 0, 0, 0.5);
+	border: 5px solid #901818;
+	margin-bottom: 3%;
+}
+
+.content a {
+	font-weight: bold;
+	color: #edcccc;
+	text-decoration: none;
+}
+
+.content a:hover {
+	color: #901818;
+}
+
+.content form input {
+	padding: 3px;
+	border: 3px solid #901818;
+}
+
+.content form select {
+	padding: 3px;
+	border: 3px solid #901818;
+}
+
+.content textarea {
+	padding: 3px;
+	border: 3px solid #901818;
+}
+
+.submit {
+	background-color: #901818;
+	color: #ffffff;
+	font-weight: bold;
+}
+
+h1 {
+	font-family:'Lora', serif;
+	padding: 5px 0 5px 0;
+	margin: 0;
+	color: #ffffff;
+	font-size: 2.5em;
+	font-weight: 400;
+}
+
+h2 {
+	font-family:'Lora', serif;
+	padding: 5px 0 5px 0;
+	margin: 0;
+	color: #ffffff;
+	font-size: 1.5em;
+	font-weight: 400;
+}
+/* Extra navigation stuff to keep out of the way */
+
+.nav {
+	background: #901818;
+	text-align: center;
+	margin: 0 auto;
+	width: 910px;
+	-webkit-box-shadow: 0px 3px 5px 0px rgba(0, 0, 0, 0.6);
+	-moz-box-shadow:    0px 3px 5px 0px rgba(0, 0, 0, 0.6);
+	box-shadow:         0px 3px 5px 0px rgba(0, 0, 0, 0.6);
+	
+}
+
+.nav ul {
+	  list-style: none;
+	  margin: 0 auto;
+	  padding: 0;
+	  line-height: 1;
+	  display: inline-block;
+	  
+}
+
+.nav ul:after {
+  content: ' ';
+  display: inline-block;
+  font-size: 0;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
+.nav ul li {
+	float: left;
+	display: block;
+	padding: 0;
+	margin: 0 auto;
+}
+.nav ul li a {
+  color: #ffffff;
+  text-decoration: none;
+  display: block;
+  padding: 10px 30px;
+  font-family: 'Lora', serif;
+  font-weight: 400;
+  text-transform: uppercase;
+  font-size: 1em;
+  position: relative;
+  margin: 0 auto;
+  -webkit-transition: color .25s;
+  -moz-transition: color .25s;
+  -ms-transition: color .25s;
+  -o-transition: color .25s;
+  transition: color .25s;
+}
+.nav ul li a:hover {
+  color: #1f1f1f;
+}
+.nav ul li a:hover:before {
+  width: 100%;
+}
+.nav ul li a:after {
+  content: '';
+  display: block;
+  position: absolute;
+  right: -3px;
+  top: 2px;
+  height: 25px;
+  width: 1px;
+  background: #ffffff;
+  opacity: 0.5;
+ 
+}
+.nav ul li a:before {
+  content: ' ';
+  display: block;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 0;
+  background: #1f1f1f;
+  -webkit-transition: width .25s;
+  -moz-transition: width .25s;
+  -ms-transition: width .25s;
+  -o-transition: width .25s;
+  transition: width .25s;
+}
+.nav ul li:last-child > a:after {
+  display: none;
+}
+.nav ul li.active a {
+  color: #1f1f1f;
+}
+.nav ul li.active a:before {
+  width: 100%;
+}
+@media screen and (max-width: 768px) {
+  .nav ul li {
+    float: none;
+  }
+  .nav ul li a {
+    width: 100%;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+  .nav ul li a:after {
+    display: none;
+  }
+  .nav ul li a:before {
+    height: 1px;
+    background: #ffffff;
+    width: 100%;
+    opacity: .2;
+  }
+  .nav ul li.last > a:before,
+  .nav ul li:last-child > a:before {
+    display: none; 
+  }
+}
